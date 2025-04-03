@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  postgres:
+    container_name: wakari-postgres
+    image: postgres:16
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_DB: wakari_db
+      POSTGRES_USER: wakari
+      POSTGRES_PASSWORD: senha123
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - wakari-network
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+    name: wakari-postgres-data
+
+networks:
+  wakari-network:
+    name: wakari-network 

@@ -1,0 +1,39 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5433/wakari_db
+    username: wakari
+    password: senha123
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: validate # usar validate pois teremos migrations com Flyway
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+    show-sql: true
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    baseline-on-migrate: true
+
+server:
+  port: 8080
+  servlet:
+    context-path: /api/v1
+
+# Configurações adicionais para JWT (serão expandidas posteriormente)
+wakari:
+  security:
+    jwt:
+      secret: ${JWT_SECRET:segredo_temporario_deve_ser_alterado_em_producao}
+      expiration: 86400000 # 24 horas em milissegundos
+
+# Configurações de logging
+logging:
+  level:
+    root: INFO
+    com.samirmamede.wakari: DEBUG
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+    org.springframework.security.config.annotation.authentication.configuration.InitializeUserDetailsBeanManagerConfigurer: ERROR
