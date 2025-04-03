@@ -106,4 +106,4 @@ Exemplo: `V2__add_order_table.sql`
 
 Samir Mamede - [anuarsamir@gmail.com](mailto:anuarsamir@gmail.com)
 
-Link do projeto: [https://github.com/samir-mamede/wakari](https://github.com/samir-mamede/wakari) 
+Link do projeto: [https://github.com/SamirMamede/wakari-back-end](https://github.com/SamirMamede/wakari-back-end) 
