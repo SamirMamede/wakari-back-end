@@ -17,7 +17,7 @@ class JwtAuthenticationFilter(
     private val userDetailsService: UserDetailsService
 ) : OncePerRequestFilter() {
     
-    private val logger = LoggerFactory.getLogger(JwtAuthenticationFilter::class.java)
+    private val jwtLogger = LoggerFactory.getLogger(JwtAuthenticationFilter::class.java)
 
     override fun doFilterInternal(
         request: HttpServletRequest,
@@ -46,11 +46,11 @@ class JwtAuthenticationFilter(
                     )
                     authToken.details = WebAuthenticationDetailsSource().buildDetails(request)
                     SecurityContextHolder.getContext().authentication = authToken
-                    logger.debug("Authenticated user: $username")
+                    jwtLogger.debug("Authenticated user: $username")
                 }
             }
         } catch (ex: Exception) {
-            logger.error("JWT Authentication failed", ex)
+            jwtLogger.error("JWT Authentication failed", ex)
         }
         
         filterChain.doFilter(request, response)

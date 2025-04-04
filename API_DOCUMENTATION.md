@@ -10,6 +10,19 @@ A API Wakari é o backend para um sistema de gerenciamento de restaurantes. Esta
 http://localhost:8080/api/v1
 ```
 
+## Documentação Interativa (Swagger)
+
+O projeto utiliza o Springdoc OpenAPI (Swagger) para fornecer uma documentação interativa da API:
+
+- **Swagger UI**: [http://localhost:8080/api/v1/swagger-ui/index.html](http://localhost:8080/api/v1/swagger-ui/index.html)
+- **OpenAPI JSON**: [http://localhost:8080/api/v1/v3/api-docs](http://localhost:8080/api/v1/v3/api-docs)
+
+Através da interface do Swagger UI, você pode:
+- Explorar todos os endpoints disponíveis
+- Ver os modelos de dados
+- Testar as requisições diretamente no navegador
+- Visualizar os códigos de resposta possíveis
+
 ## Endpoints Disponíveis
 
 ### Verificação de Status
@@ -24,7 +37,7 @@ http://localhost:8080/api/v1
   ```json
   {
     "status": "UP",
-    "timestamp": "2025-04-03T16:07:23.449794500",
+    "timestamp": "2025-04-04T10:44:56.954",
     "app": "Wakari API",
     "version": "0.0.1"
   }
@@ -51,7 +64,11 @@ http://localhost:8080/api/v1
 - **Exemplo de Resposta**:
   ```json
   {
-    "token": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c3VhcmlvQGV4ZW1wbG8uY29tIiwiaWF0IjoxNjgwNTYyMTIzLCJleHAiOjE2ODA2NDg1MjN9.exemplo_token_jwt"
+    "token": "eyJhbGciOiJIUzI1NiJ9...",
+    "userId": 1,
+    "name": "Nome do Usuário",
+    "email": "usuario@exemplo.com",
+    "role": "ADMIN"
   }
   ```
 
@@ -71,7 +88,11 @@ http://localhost:8080/api/v1
 - **Exemplo de Resposta**:
   ```json
   {
-    "token": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c3VhcmlvQGV4ZW1wbG8uY29tIiwiaWF0IjoxNjgwNTYyMTIzLCJleHAiOjE2ODA2NDg1MjN9.exemplo_token_jwt"
+    "token": "eyJhbGciOiJIUzI1NiJ9...",
+    "userId": 1,
+    "name": "Nome do Usuário",
+    "email": "usuario@exemplo.com",
+    "role": "ADMIN"
   }
   ```
 
@@ -101,13 +122,26 @@ Authorization: Bearer seu_token_jwt
 
 A aplicação está configurada com os seguintes componentes:
 
-- **Spring Boot**: Framework principal para desenvolvimento da API
+- **Spring Boot 3.2.3**: Framework principal para desenvolvimento da API
 - **Spring Security**: Para autenticação e autorização
 - **JWT**: Para geração e validação de tokens
 - **PostgreSQL**: Banco de dados relacional
 - **Hibernate/JPA**: Mapeamento objeto-relacional
 - **Flyway**: Para migrações de banco de dados
 - **BCrypt**: Para criptografia de senhas
+- **Springdoc OpenAPI**: Para documentação da API (Swagger)
+
+## Melhorias Implementadas
+
+### Sistema de Autenticação Resiliente
+- Tratamento adequado de exceções na validação de tokens JWT
+- Logs detalhados para facilitar depuração
+- Segurança aprimorada no armazenamento e validação de senhas
+
+### Documentação Interativa (Swagger)
+- Interface gráfica para explorar e testar a API
+- Modelos detalhados com exemplos
+- Anotações para melhorar a legibilidade da documentação
 
 ## Instruções para Desenvolvedores
 
@@ -125,15 +159,37 @@ spring:
 
 ### Execução da Aplicação
 
-1. Certifique-se de que o PostgreSQL está em execução na porta 5433
-2. Execute a aplicação com o comando: `./gradlew bootRun`
+1. Certifique-se de que o PostgreSQL está em execução na porta 5433:
+   ```bash
+   cd wakari-back-end
+   docker-compose up -d
+   ```
+
+2. Execute a aplicação com o comando:
+   ```bash
+   ./gradlew bootRun
+   ```
+   
+   Ou no Windows:
+   ```bash
+   gradlew.bat bootRun
+   ```
+
 3. A API estará disponível em: `http://localhost:8080/api/v1`
+4. A documentação Swagger estará disponível em: `http://localhost:8080/api/v1/swagger-ui/index.html`
 
-### Testes com Postman
+### Testes com Postman ou Swagger
 
+#### Usando Postman:
 1. Utilize o Postman ou ferramenta similar para testar os endpoints
 2. Configure o header `Content-Type: application/json` para requisições que possuem corpo
 3. Para endpoints protegidos, adicione o header `Authorization: Bearer seu_token_jwt`
+
+#### Usando Swagger UI:
+1. Acesse `http://localhost:8080/api/v1/swagger-ui/index.html`
+2. Teste o endpoint `/auth/login` para obter um token
+3. Clique no botão "Authorize" e insira o token obtido
+4. Explore e teste os demais endpoints
 
 ## Próximas Funcionalidades
 
@@ -150,6 +206,7 @@ As seguintes funcionalidades estão planejadas para implementação:
 - **Erro 401 Unauthorized**: Verifique se o token JWT é válido e está sendo enviado corretamente no header
 - **Erro 403 Forbidden**: Verifique se o usuário tem as permissões necessárias para acessar o recurso
 - **Erro de conexão com o banco de dados**: Confirme que o PostgreSQL está rodando na porta correta (5433)
+- **Swagger não carrega**: Verifique se a aplicação está rodando e se o caminho está correto (/api/v1/swagger-ui/index.html)
 
 ## Histórico de Atualizações
 
@@ -159,4 +216,5 @@ As seguintes funcionalidades estão planejadas para implementação:
 - Configuração de banco de dados PostgreSQL
 - Sistema de autenticação com JWT
 - Registro e login de usuários
-- Endpoint de verificação de saúde da API 
+- Endpoint de verificação de saúde da API
+- Documentação interativa com Swagger 

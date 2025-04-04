@@ -7,17 +7,18 @@ Wakari é um sistema completo para gerenciamento de restaurantes, incluindo cont
 ## Tecnologias Utilizadas
 
 - **Linguagem**: Kotlin
-- **Framework**: Spring Boot
+- **Framework**: Spring Boot 3.2.3
 - **Persistência**: Spring Data JPA
 - **Banco de Dados**: PostgreSQL
 - **Migrações**: Flyway
 - **Segurança**: Spring Security
 - **Autenticação**: JWT (JSON Web Token)
+- **Documentação**: Springdoc OpenAPI (Swagger)
 - **Build**: Gradle
 
 ## Pré-requisitos
 
-- JDK 17 ou superior
+- JDK 21
 - Docker e Docker Compose
 - Gradle
 
@@ -30,6 +31,7 @@ O projeto utiliza PostgreSQL como banco de dados. Para facilitar o desenvolvimen
 Para iniciar o banco de dados:
 
 ```bash
+cd wakari-back-end
 docker-compose up -d
 ```
 
@@ -73,8 +75,20 @@ src/main/kotlin/com/samirmamede/wakari/
 
 A documentação completa da API está disponível em:
 
-1. Arquivo `API_DOCUMENTATION.md` neste repositório
-2. Swagger UI (quando habilitado): http://localhost:8080/api/v1/swagger-ui.html
+1. **Arquivo** `API_DOCUMENTATION.md` neste repositório
+2. **Swagger UI**: http://localhost:8080/api/v1/swagger-ui/index.html
+3. **OpenAPI JSON**: http://localhost:8080/api/v1/v3/api-docs
+
+A documentação Swagger permite testar os endpoints diretamente pelo navegador, com uma interface interativa.
+
+## Endpoints Principais
+
+- **Autenticação**:
+  - `POST /auth/register` - Registro de novos usuários
+  - `POST /auth/login` - Login e obtenção de token JWT
+
+- **Diagnóstico**:
+  - `GET /health` - Verificação do status da API
 
 ## Executando Testes
 

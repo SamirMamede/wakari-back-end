@@ -29,6 +29,13 @@ wakari:
       secret: ${JWT_SECRET:segredo_temporario_deve_ser_alterado_em_producao}
       expiration: 86400000 # 24 horas em milissegundos
 
+# Configurações do Springdoc OpenAPI
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    path: /swagger-ui.html
+
 # Configurações de logging
 logging:
   level:
