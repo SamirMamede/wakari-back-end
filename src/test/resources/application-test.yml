@@ -1,0 +1,36 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:testdb
+    username: sa
+    password: 
+    driver-class-name: org.h2.Driver
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.H2Dialect
+        format_sql: true
+    show-sql: true
+
+  flyway:
+    enabled: false
+
+server:
+  port: 8080
+  servlet:
+    context-path: /
+
+# Configurações adicionais para JWT (serão expandidas posteriormente)
+wakari:
+  security:
+    jwt:
+      secret: test_secret_key_for_jwt_tokens_in_tests
+      expiration: 86400000 # 24 horas em milissegundos
+
+# Configurações de logging
+logging:
+  level:
+    root: INFO
+    com.samirmamede.wakari: DEBUG
+    org.hibernate.SQL: DEBUG 
