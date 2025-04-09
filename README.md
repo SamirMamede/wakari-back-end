@@ -83,12 +83,47 @@ A documentação Swagger permite testar os endpoints diretamente pelo navegador,
 
 ## Endpoints Principais
 
-- **Autenticação**:
-  - `POST /auth/register` - Registro de novos usuários
-  - `POST /auth/login` - Login e obtenção de token JWT
+### Autenticação
+- **POST /auth/register** - Registro de novos usuários
+- **POST /auth/login** - Login e obtenção de token JWT
 
-- **Diagnóstico**:
-  - `GET /health` - Verificação do status da API
+### Diagnóstico
+- **GET /health** - Verificação do status da API
+
+### Estoque
+- **GET /stock** - Listar todos os itens do estoque
+- **GET /stock/{id}** - Buscar item do estoque por ID
+- **GET /stock/search** - Buscar itens de estoque por nome
+- **GET /stock/low-stock** - Listar itens com estoque baixo
+- **POST /stock** - Criar novo item de estoque
+- **PUT /stock/{id}** - Atualizar item de estoque
+- **PATCH /stock/{id}/quantity** - Atualizar quantidade de um item no estoque
+- **POST /stock/{id}/add** - Adicionar quantidade a um item do estoque
+- **POST /stock/{id}/remove** - Remover quantidade de um item do estoque
+- **DELETE /stock/{id}** - Excluir item do estoque
+
+### Cardápio
+- **GET /menu** - Listar todos os itens do cardápio
+- **GET /menu/{id}** - Buscar item do cardápio por ID
+- **GET /menu/available** - Listar itens disponíveis no cardápio
+- **GET /menu/category/{category}** - Listar itens do cardápio por categoria
+- **GET /menu/categories** - Listar todas as categorias do cardápio
+- **POST /menu** - Criar novo item do cardápio
+- **PUT /menu/{id}** - Atualizar item do cardápio
+- **POST /menu/{id}/recipes** - Adicionar ingrediente a um item do cardápio
+- **PUT /menu/{menuItemId}/recipes/{recipeId}** - Atualizar ingrediente na receita
+- **DELETE /menu/{menuItemId}/recipes/{recipeId}** - Remover ingrediente da receita
+- **POST /menu/update-availability** - Atualizar disponibilidade de todos os itens
+- **DELETE /menu/{id}** - Excluir item do cardápio
+
+### Receitas
+- **GET /recipes** - Listar todas as receitas
+- **GET /recipes/{id}** - Buscar receita por ID
+- **GET /recipes/menu-item/{menuItemId}** - Listar receitas por item do cardápio
+- **GET /recipes/stock-item/{stockItemId}** - Listar receitas por item de estoque
+- **POST /recipes** - Criar nova receita
+- **PUT /recipes/{id}** - Atualizar receita
+- **DELETE /recipes/{id}** - Excluir receita
 
 ## Executando Testes
 
@@ -107,6 +142,20 @@ V{número_sequencial}__{descrição}.sql
 ```
 
 Exemplo: `V2__add_order_table.sql`
+
+## Status do Projeto
+
+O projeto atualmente implementa:
+- Sistema de autenticação e autorização com JWT
+- Gerenciamento de estoque com controle de quantidades mínimas
+- Sistema de cardápio com categorias e disponibilidade dinâmica
+- Gerenciamento de receitas (relação entre itens do cardápio e estoque)
+- Atualização automática da disponibilidade dos itens com base no estoque
+
+Próximos passos:
+- Implementação do gerenciamento de mesas
+- Sistema de pedidos (mesa/delivery)
+- Painel administrativo com visão em tempo real
 
 ## Contribuindo
 
