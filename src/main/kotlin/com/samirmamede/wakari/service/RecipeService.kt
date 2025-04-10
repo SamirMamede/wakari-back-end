@@ -1,10 +1,13 @@
 package com.samirmamede.wakari.service
 
+import com.samirmamede.wakari.dto.RecipeRequest
+import com.samirmamede.wakari.dto.RecipeResponse
+import com.samirmamede.wakari.dto.RecipeUpdateRequest
+import com.samirmamede.wakari.exception.ResourceNotFoundException
 import com.samirmamede.wakari.model.Recipe
 import com.samirmamede.wakari.repository.MenuItemRepository
 import com.samirmamede.wakari.repository.RecipeRepository
 import com.samirmamede.wakari.repository.StockItemRepository
-import jakarta.persistence.EntityNotFoundException
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
@@ -13,35 +16,37 @@ import java.time.LocalDateTime
 class RecipeService(
     private val recipeRepository: RecipeRepository,
     private val menuItemRepository: MenuItemRepository,
-    private val stockItemRepository: StockItemRepository,
-    private val menuItemService: MenuItemService
+    private val stockItemRepository: StockItemRepository
 ) {
-    fun findAll(): List<Recipe> = recipeRepository.findAll()
+    fun findAll(): List<RecipeResponse> = recipeRepository.findAll().map { RecipeResponse.fromEntity(it) }
     
-    fun findById(id: Long): Recipe = recipeRepository.findById(id)
-        .orElseThrow { EntityNotFoundException("Receita não encontrada com ID: $id") }
-    
-    fun findByMenuItemId(menuItemId: Long): List<Recipe> {
-        val menuItem = menuItemRepository.findById(menuItemId)
-            .orElseThrow { EntityNotFoundException("Item do cardápio não encontrado com ID: $menuItemId") }
-        return recipeRepository.findByMenuItem(menuItem)
+    fun findById(id: Long): RecipeResponse {
+        val recipe = recipeRepository.findById(id)
+            .orElseThrow { ResourceNotFoundException("Receita não encontrada com ID: $id") }
+        return RecipeResponse.fromEntity(recipe)
     }
     
-    fun findByStockItemId(stockItemId: Long): List<Recipe> {
+    fun findByMenuItemId(menuItemId: Long): List<RecipeResponse> {
+        val menuItem = menuItemRepository.findById(menuItemId)
+            .orElseThrow { ResourceNotFoundException("Item do cardápio não encontrado com ID: $menuItemId") }
+        return recipeRepository.findByMenuItemId(menuItemId).map { RecipeResponse.fromEntity(it) }
+    }
+    
+    fun findByStockItemId(stockItemId: Long): List<RecipeResponse> {
         val stockItem = stockItemRepository.findById(stockItemId)
-            .orElseThrow { EntityNotFoundException("Item de estoque não encontrado com ID: $stockItemId") }
-        return recipeRepository.findByStockItem(stockItem)
+            .orElseThrow { ResourceNotFoundException("Item de estoque não encontrado com ID: $stockItemId") }
+        return recipeRepository.findByStockItemId(stockItemId).map { RecipeResponse.fromEntity(it) }
     }
     
     @Transactional
-    fun create(recipe: Recipe): Recipe {
+    fun create(request: RecipeRequest): RecipeResponse {
         // Verificar se o item do cardápio existe
-        val menuItem = menuItemRepository.findById(recipe.menuItem.id)
-            .orElseThrow { EntityNotFoundException("Item do cardápio não encontrado com ID: ${recipe.menuItem.id}") }
+        val menuItem = menuItemRepository.findById(request.menuItemId)
+            .orElseThrow { ResourceNotFoundException("Item do cardápio não encontrado com ID: ${request.menuItemId}") }
         
         // Verificar se o item de estoque existe
-        val stockItem = stockItemRepository.findById(recipe.stockItem.id)
-            .orElseThrow { EntityNotFoundException("Item de estoque não encontrado com ID: ${recipe.stockItem.id}") }
+        val stockItem = stockItemRepository.findById(request.stockItemId)
+            .orElseThrow { ResourceNotFoundException("Item de estoque não encontrado com ID: ${request.stockItemId}") }
         
         // Verificar se já existe uma receita para este item do cardápio e item de estoque
         val existingRecipe = recipeRepository.findByMenuItemIdAndStockItemId(menuItem.id, stockItem.id)
@@ -53,41 +58,33 @@ class RecipeService(
         val newRecipe = Recipe(
             menuItem = menuItem,
             stockItem = stockItem,
-            quantity = recipe.quantity
+            quantity = request.quantity,
+            cost = request.cost
         )
         
         val savedRecipe = recipeRepository.save(newRecipe)
-        
-        // Atualizar disponibilidade do item do cardápio
-        menuItemService.updateAvailabilityBasedOnStock(menuItem)
-        
-        return savedRecipe
+        return RecipeResponse.fromEntity(savedRecipe)
     }
     
     @Transactional
-    fun update(id: Long, updatedRecipe: Recipe): Recipe {
-        val existingRecipe = findById(id)
+    fun update(id: Long, request: RecipeUpdateRequest): RecipeResponse {
+        val existingRecipe = recipeRepository.findById(id)
+            .orElseThrow { ResourceNotFoundException("Receita não encontrada com ID: $id") }
         
-        // Atualizar apenas a quantidade, não permitindo alterar o item do cardápio ou o item de estoque
-        existingRecipe.quantity = updatedRecipe.quantity
-        existingRecipe.updatedAt = LocalDateTime.now()
+        // Atualizar apenas a quantidade e o custo
+        val updatedRecipe = existingRecipe.copy(
+            quantity = request.quantity,
+            cost = request.cost
+        )
         
-        val savedRecipe = recipeRepository.save(existingRecipe)
-        
-        // Atualizar disponibilidade do item do cardápio
-        menuItemService.updateAvailabilityBasedOnStock(existingRecipe.menuItem)
-        
-        return savedRecipe
+        val savedRecipe = recipeRepository.save(updatedRecipe)
+        return RecipeResponse.fromEntity(savedRecipe)
     }
     
     @Transactional
     fun delete(id: Long) {
-        val recipe = findById(id)
-        val menuItem = recipe.menuItem
-        
-        recipeRepository.delete(recipe)
-        
-        // Atualizar disponibilidade do item do cardápio
-        menuItemService.updateAvailabilityBasedOnStock(menuItem)
+        val recipe = recipeRepository.findById(id)
+            .orElseThrow { ResourceNotFoundException("Receita não encontrada com ID: $id") }
+        recipeRepository.deleteById(recipe.id)
     }
 } 

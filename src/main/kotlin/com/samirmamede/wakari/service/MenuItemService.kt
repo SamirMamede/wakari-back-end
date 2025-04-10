@@ -79,7 +79,8 @@ class MenuItemService(
         val newRecipe = Recipe(
             menuItem = menuItem,
             stockItem = stockItem,
-            quantity = recipe.quantity
+            quantity = recipe.quantity,
+            cost = recipe.cost
         )
         
         recipeRepository.save(newRecipe)
@@ -91,7 +92,12 @@ class MenuItemService(
     }
     
     @Transactional
-    fun updateRecipe(menuItemId: Long, recipeId: Long, updatedQuantity: java.math.BigDecimal): Recipe {
+    fun updateRecipe(
+        menuItemId: Long,
+        recipeId: Long,
+        updatedQuantity: java.math.BigDecimal,
+        updatedCost: java.math.BigDecimal
+    ): Recipe {
         val recipe = recipeRepository.findById(recipeId)
             .orElseThrow { EntityNotFoundException("Receita não encontrada com ID: $recipeId") }
         
@@ -99,14 +105,17 @@ class MenuItemService(
             throw IllegalArgumentException("A receita não pertence ao item do cardápio especificado")
         }
         
-        recipe.quantity = updatedQuantity
+        val updatedRecipe = recipe.copy(
+            quantity = updatedQuantity,
+            cost = updatedCost
+        )
         
-        val updatedRecipe = recipeRepository.save(recipe)
+        val savedRecipe = recipeRepository.save(updatedRecipe)
         
         // Atualizar disponibilidade do item do cardápio
         updateAvailabilityBasedOnStock(recipe.menuItem)
         
-        return updatedRecipe
+        return savedRecipe
     }
     
     @Transactional

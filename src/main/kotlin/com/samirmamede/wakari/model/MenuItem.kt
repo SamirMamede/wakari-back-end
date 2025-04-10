@@ -37,4 +37,12 @@ data class MenuItem(
     
     @Column(name = "updated_at", nullable = false)
     var updatedAt: LocalDateTime = LocalDateTime.now()
-) 
+) {
+
+    constructor(id: Long) : this(
+        id = id,
+        name = "Placeholder",
+        price = BigDecimal.ZERO,
+        category = "Placeholder"
+    )
+} 

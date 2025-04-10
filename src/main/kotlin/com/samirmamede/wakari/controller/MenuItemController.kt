@@ -120,7 +120,8 @@ class MenuItemController(private val menuItemService: MenuItemService) {
         val recipeToAdd = Recipe(
             menuItem = MenuItem(id = id),
             stockItem = com.samirmamede.wakari.model.StockItem(id = request.stockItemId),
-            quantity = request.quantity
+            quantity = request.quantity,
+            cost = request.cost
         )
         
         val updatedMenuItem = menuItemService.addRecipe(id, recipeToAdd)
@@ -128,14 +129,14 @@ class MenuItemController(private val menuItemService: MenuItemService) {
     }
     
     @PutMapping("/{menuItemId}/recipes/{recipeId}")
-    @Operation(summary = "Atualizar quantidade de um ingrediente na receita")
+    @Operation(summary = "Atualizar quantidade e custo de um ingrediente na receita")
     @PreAuthorize("hasRole('ADMIN')")
     fun updateRecipe(
         @PathVariable menuItemId: Long,
         @PathVariable recipeId: Long,
         @Valid @RequestBody request: RecipeUpdateRequest
     ): ResponseEntity<RecipeResponse> {
-        val updatedRecipe = menuItemService.updateRecipe(menuItemId, recipeId, request.quantity)
+        val updatedRecipe = menuItemService.updateRecipe(menuItemId, recipeId, request.quantity, request.cost)
         return ResponseEntity.ok(RecipeResponse.fromEntity(updatedRecipe))
     }
     

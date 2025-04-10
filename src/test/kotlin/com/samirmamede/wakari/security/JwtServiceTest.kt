@@ -1,8 +1,12 @@
 package com.samirmamede.wakari.security
 
 import io.jsonwebtoken.Claims
+import io.jsonwebtoken.ExpiredJwtException
+import io.jsonwebtoken.MalformedJwtException
+import io.jsonwebtoken.security.SignatureException
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.springframework.security.core.userdetails.User
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.test.util.ReflectionTestUtils
@@ -56,14 +60,9 @@ class JwtServiceTest {
         // Act
         val token = jwtService.generateToken(userDetails)
         
-        // Tentar validar - deve falhar devido à expiração
-        try {
-            val isValid = jwtService.isTokenValid(token, userDetails)
-            assertFalse(isValid) // Se não lançar exceção, o token deve ser inválido
-        } catch (e: Exception) {
-            // Uma exceção também é um resultado aceitável para um token expirado
-            assertTrue(e.message?.contains("expired") ?: false || 
-                       e.cause?.message?.contains("expired") ?: false)
+        // Assert
+        assertThrows<ExpiredJwtException> {
+            jwtService.isTokenValid(token, userDetails)
         }
     }
     
@@ -89,13 +88,8 @@ class JwtServiceTest {
         val invalidToken = "invalid.token.string"
         
         // Act & Assert
-        try {
-            val result = jwtService.extractUsername(invalidToken)
-            assertEquals("", result)
-        } catch (e: Exception) {
-            // In this implementation, an exception might be thrown instead
-            // which is also acceptable behavior for invalid tokens
-            assertTrue(true)
+        assertThrows<MalformedJwtException> {
+            jwtService.extractUsername(invalidToken)
         }
     }
     
@@ -113,6 +107,52 @@ class JwtServiceTest {
         assertNotNull(token)
         assertEquals(username, jwtService.extractUsername(token))
         assertTrue(jwtService.isTokenValid(token, userDetails))
+    }
+    
+    @Test
+    fun `isTokenValid should throw exception for malformed token`() {
+        // Arrange
+        val username = "test@example.com"
+        val authorities = emptyList<String>()
+        val userDetails = createUserDetails(username, authorities)
+        val malformedToken = "invalid.token"
+        
+        // Act & Assert
+        assertThrows<MalformedJwtException> {
+            jwtService.isTokenValid(malformedToken, userDetails)
+        }
+    }
+    
+    @Test
+    fun `isTokenValid should throw exception for token with invalid signature`() {
+        // Arrange
+        val username = "test@example.com"
+        val authorities = emptyList<String>()
+        val userDetails = createUserDetails(username, authorities)
+        val token = jwtService.generateToken(userDetails)
+        val tamperedToken = token.substring(0, token.lastIndexOf('.')) + ".tampered"
+        
+        // Act & Assert
+        assertThrows<SignatureException> {
+            jwtService.isTokenValid(tamperedToken, userDetails)
+        }
+    }
+    
+    @Test
+    fun `extractClaim should return correct value for specific claim`() {
+        // Arrange
+        val username = "test@example.com"
+        val authorities = emptyList<String>()
+        val userDetails = createUserDetails(username, authorities)
+        val customValue = "test-value"
+        val extraClaims = mapOf("customClaim" to customValue)
+        
+        // Act
+        val token = jwtService.generateToken(extraClaims, userDetails)
+        val extractedClaim = jwtService.extractClaim(token) { claims: Claims -> claims["customClaim"] as String }
+        
+        // Assert
+        assertEquals(customValue, extractedClaim)
     }
     
     private fun createUserDetails(username: String, authorities: List<String>): UserDetails {

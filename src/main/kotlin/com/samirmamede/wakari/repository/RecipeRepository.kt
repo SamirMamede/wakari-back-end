@@ -11,4 +11,6 @@ interface RecipeRepository : JpaRepository<Recipe, Long> {
     fun findByMenuItem(menuItem: MenuItem): List<Recipe>
     fun findByStockItem(stockItem: StockItem): List<Recipe>
     fun findByMenuItemIdAndStockItemId(menuItemId: Long, stockItemId: Long): Recipe?
+    fun findByMenuItemId(menuItemId: Long): List<Recipe>
+    fun findByStockItemId(stockItemId: Long): List<Recipe>
 } 

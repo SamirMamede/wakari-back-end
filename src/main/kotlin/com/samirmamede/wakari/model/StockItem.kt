@@ -35,4 +35,9 @@ data class StockItem(
     fun isLowStock(): Boolean {
         return quantity <= minQuantity
     }
+    constructor(id: Long) : this(
+        id = id,
+        name = "Placeholder",
+        unit = "un"
+    )
 } 

@@ -14,12 +14,12 @@ import org.mockito.ArgumentMatchers
 import org.mockito.Mockito.*
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
-import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.security.crypto.password.PasswordEncoder
 import java.util.*
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
+import org.springframework.security.authentication.BadCredentialsException
 
 class AuthServiceTest {
 
@@ -70,8 +70,6 @@ class AuthServiceTest {
         )
         
         `when`(userRepository.save(any())).thenReturn(savedUser)
-        
-        // Mock para o userDetails que será criado dentro do método
         `when`(jwtService.generateToken(any(), any())).thenReturn(token)
         
         // Act
@@ -171,6 +169,23 @@ class AuthServiceTest {
         verify(authenticationManager).authenticate(any())
         verify(userRepository).findByEmail(request.email)
         verifyNoMoreInteractions(jwtService)
+    }
+    
+    @Test
+    fun `authenticate should throw exception for invalid password`() {
+        // Arrange
+        val request = AuthRequest(
+            email = "test@example.com",
+            password = "wrong_password"
+        )
+        
+        `when`(authenticationManager.authenticate(any()))
+            .thenThrow(BadCredentialsException("Invalid credentials"))
+        
+        // Act & Assert
+        assertThrows<BadCredentialsException> {
+            authService.authenticate(request)
+        }
     }
     
     // Função auxiliar para ajudar o Mockito com a tipagem
