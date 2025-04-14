@@ -13,6 +13,9 @@ data class RestaurantTable(
     @Column(nullable = false, unique = true)
     val number: Int,
     
+    @Column(nullable = false)
+    val capacity: Int,
+    
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     var status: TableStatus = TableStatus.AVAILABLE,

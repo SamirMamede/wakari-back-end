@@ -576,6 +576,18 @@ Authorization: Bearer seu_token_jwt
 | created_at  | Datetime | Data e hora de criação do registro                 |
 | updated_at  | Datetime | Data e hora da última atualização do registro      |
 
+### Mesa (RestaurantTable)
+
+| Campo         | Tipo     | Descrição                                         |
+|---------------|----------|---------------------------------------------------|
+| id            | Long     | Identificador único da mesa                        |
+| number        | Int      | Número da mesa (único no restaurante)              |
+| capacity      | Int      | Capacidade de pessoas na mesa                      |
+| status        | Enum     | Estado atual da mesa (AVAILABLE, OCCUPIED, etc.)   |
+| current_order | Order    | Pedido atualmente associado à mesa (se houver)     |
+| created_at    | Datetime | Data e hora de criação do registro                 |
+| updated_at    | Datetime | Data e hora da última atualização do registro      |
+
 ### Item de Estoque (StockItem)
 
 | Campo        | Tipo     | Descrição                                        |
@@ -695,7 +707,9 @@ spring:
 
 As seguintes funcionalidades estão planejadas para implementação:
 
-- Gerenciamento de mesas
+- Gerenciamento de mesas (em desenvolvimento)
+  - Modelo de dados implementado
+  - Endpoints REST a implementar
 - Sistema de pedidos
 - Módulo de entrega
 - Relatórios
@@ -708,6 +722,12 @@ As seguintes funcionalidades estão planejadas para implementação:
 - **Swagger não carrega**: Verifique se a aplicação está rodando e se o caminho está correto (/api/v1/swagger-ui/index.html)
 
 ## Histórico de Atualizações
+
+### Versão 0.1.1 (Abril/2025)
+
+- Início da implementação do sistema de mesas
+- Adicionado modelo de dados para mesas com capacidade
+- Correção de bugs no sistema de receitas
 
 ### Versão 0.1.0 (Maio/2025)
 
