@@ -55,6 +55,18 @@ class GlobalExceptionHandler {
         return ResponseEntity(response, HttpStatus.CONFLICT)
     }
     
+    @ExceptionHandler(ResourceAlreadyExistsException::class)
+    fun handleResourceAlreadyExistsException(ex: ResourceAlreadyExistsException): ResponseEntity<ErrorResponse> {
+        val response = ErrorResponse(
+            timestamp = LocalDateTime.now(),
+            status = HttpStatus.CONFLICT.value(),
+            error = "Conflito",
+            message = ex.message ?: "Recurso já existe",
+            path = null
+        )
+        return ResponseEntity(response, HttpStatus.CONFLICT)
+    }
+    
     @ExceptionHandler(BadCredentialsException::class)
     fun handleBadCredentialsException(ex: BadCredentialsException): ResponseEntity<ErrorResponse> {
         val response = ErrorResponse(
@@ -74,6 +86,18 @@ class GlobalExceptionHandler {
             status = HttpStatus.NOT_FOUND.value(),
             error = "Não encontrado",
             message = ex.message ?: "Usuário não encontrado",
+            path = null
+        )
+        return ResponseEntity(response, HttpStatus.NOT_FOUND)
+    }
+    
+    @ExceptionHandler(ResourceNotFoundException::class)
+    fun handleResourceNotFoundException(ex: ResourceNotFoundException): ResponseEntity<ErrorResponse> {
+        val response = ErrorResponse(
+            timestamp = LocalDateTime.now(),
+            status = HttpStatus.NOT_FOUND.value(),
+            error = "Não encontrado",
+            message = ex.message ?: "Recurso não encontrado",
             path = null
         )
         return ResponseEntity(response, HttpStatus.NOT_FOUND)

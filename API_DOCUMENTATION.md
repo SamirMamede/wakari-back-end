@@ -96,6 +96,194 @@ Através da interface do Swagger UI, você pode:
   }
   ```
 
+### Mesas
+
+#### Listar Todas as Mesas
+
+- **URL**: `/tables?page=0&size=10&sort=number`
+- **Método**: GET
+- **Autenticação**: Requer token JWT
+- **Perfis Autorizados**: ADMIN, WAITER
+- **Descrição**: Retorna todas as mesas do restaurante, com paginação.
+- **Parâmetros de Consulta**:
+  - `page`: Número da página (padrão: 0)
+  - `size`: Tamanho da página (padrão: 10)
+  - `sort`: Campo para ordenação (padrão: number)
+- **Exemplo de Resposta**:
+  ```json
+  {
+    "content": [
+      {
+        "id": 1,
+        "number": 1,
+        "capacity": 4,
+        "status": "AVAILABLE",
+        "currentOrderId": null,
+        "createdAt": "2025-04-04T10:44:56.954",
+        "updatedAt": "2025-04-04T10:44:56.954"
+      },
+      {
+        "id": 2,
+        "number": 2,
+        "capacity": 6,
+        "status": "OCCUPIED",
+        "currentOrderId": 1,
+        "createdAt": "2025-04-04T10:44:56.954",
+        "updatedAt": "2025-04-04T10:44:56.954"
+      }
+    ],
+    "pageable": {
+      "pageNumber": 0,
+      "pageSize": 10,
+      "sort": {
+        "sorted": true,
+        "unsorted": false,
+        "empty": false
+      },
+      "offset": 0,
+      "paged": true,
+      "unpaged": false
+    },
+    "totalElements": 2,
+    "totalPages": 1,
+    "last": true,
+    "size": 10,
+    "number": 0,
+    "sort": {
+      "sorted": true,
+      "unsorted": false,
+      "empty": false
+    },
+    "numberOfElements": 2,
+    "first": true,
+    "empty": false
+  }
+  ```
+
+#### Buscar Mesa por ID
+
+- **URL**: `/tables/{id}`
+- **Método**: GET
+- **Autenticação**: Requer token JWT
+- **Perfis Autorizados**: ADMIN, WAITER
+- **Descrição**: Retorna uma mesa específica pelo seu ID.
+- **Exemplo de Resposta**:
+  ```json
+  {
+    "id": 1,
+    "number": 1,
+    "capacity": 4,
+    "status": "AVAILABLE",
+    "currentOrderId": null,
+    "createdAt": "2025-04-04T10:44:56.954",
+    "updatedAt": "2025-04-04T10:44:56.954"
+  }
+  ```
+
+#### Buscar Mesa por Número
+
+- **URL**: `/tables/number/{number}`
+- **Método**: GET
+- **Autenticação**: Requer token JWT
+- **Perfis Autorizados**: ADMIN, WAITER
+- **Descrição**: Busca uma mesa pelo seu número.
+- **Exemplo de Resposta**: Similar ao endpoint de busca por ID.
+
+#### Listar Mesas por Status
+
+- **URL**: `/tables/status/{status}`
+- **Método**: GET
+- **Autenticação**: Requer token JWT
+- **Perfis Autorizados**: ADMIN, WAITER
+- **Descrição**: Lista todas as mesas com um status específico (AVAILABLE, OCCUPIED, RESERVED, CLEANING).
+- **Exemplo de Resposta**:
+  ```json
+  [
+    {
+      "id": 1,
+      "number": 1,
+      "capacity": 4,
+      "status": "AVAILABLE",
+      "currentOrderId": null,
+      "createdAt": "2025-04-04T10:44:56.954",
+      "updatedAt": "2025-04-04T10:44:56.954"
+    },
+    {
+      "id": 3,
+      "number": 3,
+      "capacity": 2,
+      "status": "AVAILABLE",
+      "currentOrderId": null,
+      "createdAt": "2025-04-04T10:44:56.954",
+      "updatedAt": "2025-04-04T10:44:56.954"
+    }
+  ]
+  ```
+
+#### Criar Nova Mesa
+
+- **URL**: `/tables`
+- **Método**: POST
+- **Autenticação**: Requer token JWT
+- **Perfis Autorizados**: ADMIN
+- **Corpo da Requisição**:
+  ```json
+  {
+    "number": 5,
+    "capacity": 8
+  }
+  ```
+- **Exemplo de Resposta**: A mesa criada, similar ao endpoint de busca por ID.
+
+#### Atualizar Mesa Existente
+
+- **URL**: `/tables/{id}`
+- **Método**: PUT
+- **Autenticação**: Requer token JWT
+- **Perfis Autorizados**: ADMIN
+- **Corpo da Requisição**:
+  ```json
+  {
+    "number": 5,
+    "capacity": 10,
+    "status": "RESERVED"
+  }
+  ```
+- **Exemplo de Resposta**: A mesa atualizada.
+
+#### Atualizar Status da Mesa
+
+- **URL**: `/tables/{id}/status`
+- **Método**: PATCH
+- **Autenticação**: Requer token JWT
+- **Perfis Autorizados**: ADMIN, WAITER
+- **Corpo da Requisição**:
+  ```json
+  {
+    "status": "OCCUPIED"
+  }
+  ```
+- **Valores válidos para `status`**: `AVAILABLE`, `OCCUPIED`, `RESERVED`, `CLEANING`
+- **Exemplo de Resposta**: A mesa com o status atualizado.
+
+#### Limpar Todas as Mesas em Limpeza
+
+- **URL**: `/tables/cleanup`
+- **Método**: POST
+- **Autenticação**: Requer token JWT
+- **Perfis Autorizados**: ADMIN, WAITER
+- **Descrição**: Altera o status de todas as mesas em limpeza (CLEANING) para disponível (AVAILABLE).
+- **Resposta**: 200 OK
+
+#### Excluir Mesa
+
+- **URL**: `/tables/{id}`
+- **Método**: DELETE
+- **Autenticação**: Requer token JWT
+- **Perfis Autorizados**: ADMIN
+- **Descrição**: Exclui uma mesa do sistema (apenas se não estiver associada a nenhum pedido).
+- **Resposta**: 204 No Content
+
 ### Estoque
 
 #### Listar Todos os Itens de Estoque
@@ -578,15 +766,15 @@ Authorization: Bearer seu_token_jwt
 
 ### Mesa (RestaurantTable)
 
-| Campo         | Tipo     | Descrição                                         |
-|---------------|----------|---------------------------------------------------|
-| id            | Long     | Identificador único da mesa                        |
-| number        | Int      | Número da mesa (único no restaurante)              |
-| capacity      | Int      | Capacidade de pessoas na mesa                      |
-| status        | Enum     | Estado atual da mesa (AVAILABLE, OCCUPIED, etc.)   |
-| current_order | Order    | Pedido atualmente associado à mesa (se houver)     |
-| created_at    | Datetime | Data e hora de criação do registro                 |
-| updated_at    | Datetime | Data e hora da última atualização do registro      |
+| Campo             | Tipo     | Descrição                                         |
+|-------------------|----------|---------------------------------------------------|
+| id                | Long     | Identificador único da mesa                       |
+| number            | Int      | Número da mesa (único no sistema)                 |
+| capacity          | Int      | Capacidade de pessoas na mesa                     |
+| status            | Enum     | Status da mesa (AVAILABLE, OCCUPIED, etc.)        |
+| current_order_id  | Long     | Referência ao pedido atual em andamento na mesa   |
+| created_at        | Datetime | Data e hora de criação do registro                |
+| updated_at        | Datetime | Data e hora da última atualização do registro     |
 
 ### Item de Estoque (StockItem)
 
@@ -744,3 +932,9 @@ As seguintes funcionalidades estão planejadas para implementação:
 - Registro e login de usuários
 - Endpoint de verificação de saúde da API
 - Documentação interativa com Swagger 
+
+### Versão 0.2.0 (Maio/2025)
+
+- Implementação do sistema de mesas
+- Endpoints para listar, criar, atualizar e excluir mesas
+- Controle de status das mesas (disponível, ocupada, reservada, em limpeza) 

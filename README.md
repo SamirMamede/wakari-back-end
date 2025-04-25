@@ -125,6 +125,17 @@ A documentação Swagger permite testar os endpoints diretamente pelo navegador,
 - **PUT /recipes/{id}** - Atualizar receita
 - **DELETE /recipes/{id}** - Excluir receita
 
+### Mesas
+- **GET /tables** - Listar todas as mesas
+- **GET /tables/{id}** - Buscar mesa por ID
+- **GET /tables/number/{number}** - Buscar mesa por número
+- **GET /tables/status/{status}** - Listar mesas por status
+- **POST /tables** - Criar nova mesa
+- **PUT /tables/{id}** - Atualizar mesa existente
+- **PATCH /tables/{id}/status** - Atualizar status da mesa
+- **POST /tables/cleanup** - Limpar todas as mesas em estado de limpeza
+- **DELETE /tables/{id}** - Excluir mesa
+
 ## Executando Testes
 
 ```bash
@@ -151,10 +162,10 @@ O projeto atualmente implementa:
 - Sistema de cardápio com categorias e disponibilidade dinâmica
 - Gerenciamento de receitas (relação entre itens do cardápio e estoque)
 - Atualização automática da disponibilidade dos itens com base no estoque
+- Sistema de mesas com controle de status (disponível, ocupada, reservada, em limpeza)
 
 Próximos passos:
-- Implementação do gerenciamento de mesas
-- Sistema de pedidos (mesa/delivery)
+- Implementação do sistema de pedidos (mesa/delivery)
 - Painel administrativo com visão em tempo real
 
 ## Contribuindo
