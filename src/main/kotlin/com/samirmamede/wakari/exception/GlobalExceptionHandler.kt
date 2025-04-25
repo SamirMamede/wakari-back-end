@@ -102,6 +102,18 @@ class GlobalExceptionHandler {
         )
         return ResponseEntity(response, HttpStatus.NOT_FOUND)
     }
+    
+    @ExceptionHandler(InvalidOperationException::class)
+    fun handleInvalidOperationException(ex: InvalidOperationException): ResponseEntity<ErrorResponse> {
+        val response = ErrorResponse(
+            timestamp = LocalDateTime.now(),
+            status = HttpStatus.BAD_REQUEST.value(),
+            error = "Operação inválida",
+            message = ex.message ?: "A operação solicitada não pode ser executada",
+            path = null
+        )
+        return ResponseEntity(response, HttpStatus.BAD_REQUEST)
+    }
 }
 
 data class ErrorResponse(
