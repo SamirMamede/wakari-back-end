@@ -284,6 +284,239 @@ Através da interface do Swagger UI, você pode:
 - **Descrição**: Exclui uma mesa do sistema (apenas se não estiver associada a nenhum pedido).
 - **Resposta**: 204 No Content
 
+### Pedidos
+
+#### Listar Todos os Pedidos
+
+- **URL**: `/orders?page=0&size=10`
+- **Método**: GET
+- **Autenticação**: Requer token JWT
+- **Perfis Autorizados**: ADMIN, WAITER, KITCHEN
+- **Descrição**: Retorna todos os pedidos, com paginação.
+- **Parâmetros de Consulta**:
+  - `page`: Número da página (padrão: 0)
+  - `size`: Tamanho da página (padrão: 10)
+- **Exemplo de Resposta**:
+  ```json
+  {
+    "content": [
+      {
+        "id": 1,
+        "userId": 1,
+        "userName": "João Silva",
+        "tableId": 2,
+        "tableNumber": 2,
+        "total": 65.80,
+        "status": "PENDING",
+        "isDelivery": false,
+        "items": [
+          {
+            "id": 1,
+            "menuItemId": 3,
+            "menuItemName": "Pizza Margherita",
+            "quantity": 1,
+            "priceAtTime": 45.90,
+            "subtotal": 45.90,
+            "notes": "Sem cebola",
+            "createdAt": "2025-04-04T10:44:56.954",
+            "updatedAt": "2025-04-04T10:44:56.954"
+          },
+          {
+            "id": 2,
+            "menuItemId": 8,
+            "menuItemName": "Refrigerante Cola",
+            "quantity": 2,
+            "priceAtTime": 9.95,
+            "subtotal": 19.90,
+            "notes": null,
+            "createdAt": "2025-04-04T10:44:56.954",
+            "updatedAt": "2025-04-04T10:44:56.954"
+          }
+        ],
+        "createdAt": "2025-04-04T10:44:56.954",
+        "updatedAt": "2025-04-04T10:44:56.954"
+      }
+    ],
+    "pageable": {
+      "pageNumber": 0,
+      "pageSize": 10,
+      "sort": {
+        "sorted": true,
+        "unsorted": false,
+        "empty": false
+      },
+      "offset": 0,
+      "paged": true,
+      "unpaged": false
+    },
+    "totalElements": 1,
+    "totalPages": 1,
+    "last": true,
+    "size": 10,
+    "number": 0,
+    "sort": {
+      "sorted": true,
+      "unsorted": false,
+      "empty": false
+    },
+    "numberOfElements": 1,
+    "first": true,
+    "empty": false
+  }
+  ```
+
+#### Buscar Pedido por ID
+
+- **URL**: `/orders/{id}`
+- **Método**: GET
+- **Autenticação**: Requer token JWT
+- **Perfis Autorizados**: ADMIN, WAITER, KITCHEN
+- **Descrição**: Retorna um pedido específico pelo seu ID.
+- **Exemplo de Resposta**:
+  ```json
+  {
+    "id": 1,
+    "userId": 1,
+    "userName": "João Silva",
+    "tableId": 2,
+    "tableNumber": 2,
+    "total": 65.80,
+    "status": "PENDING",
+    "isDelivery": false,
+    "items": [
+      {
+        "id": 1,
+        "menuItemId": 3,
+        "menuItemName": "Pizza Margherita",
+        "quantity": 1,
+        "priceAtTime": 45.90,
+        "subtotal": 45.90,
+        "notes": "Sem cebola",
+        "createdAt": "2025-04-04T10:44:56.954",
+        "updatedAt": "2025-04-04T10:44:56.954"
+      },
+      {
+        "id": 2,
+        "menuItemId": 8,
+        "menuItemName": "Refrigerante Cola",
+        "quantity": 2,
+        "priceAtTime": 9.95,
+        "subtotal": 19.90,
+        "notes": null,
+        "createdAt": "2025-04-04T10:44:56.954",
+        "updatedAt": "2025-04-04T10:44:56.954"
+      }
+    ],
+    "createdAt": "2025-04-04T10:44:56.954",
+    "updatedAt": "2025-04-04T10:44:56.954"
+  }
+  ```
+
+#### Buscar Pedidos por Status
+
+- **URL**: `/orders/status/{status}`
+- **Método**: GET
+- **Autenticação**: Requer token JWT
+- **Perfis Autorizados**: ADMIN, WAITER, KITCHEN
+- **Descrição**: Retorna todos os pedidos com um status específico.
+- **Valores válidos para `status`**: `PENDING`, `PREPARING`, `READY`, `DELIVERED`, `CANCELED`
+- **Exemplo de Resposta**: Similar ao endpoint de listagem.
+
+#### Buscar Pedidos de um Usuário
+
+- **URL**: `/orders/user/{userId}`
+- **Método**: GET
+- **Autenticação**: Requer token JWT
+- **Perfis Autorizados**: ADMIN, WAITER, ou o próprio usuário
+- **Descrição**: Retorna todos os pedidos de um usuário específico.
+- **Exemplo de Resposta**: Similar ao endpoint de listagem.
+
+#### Buscar Pedidos por Período
+
+- **URL**: `/orders/date-range?startDate=2025-04-01&endDate=2025-04-05`
+- **Método**: GET
+- **Autenticação**: Requer token JWT
+- **Perfis Autorizados**: ADMIN
+- **Descrição**: Retorna todos os pedidos criados dentro de um intervalo de datas.
+- **Parâmetros de Consulta**:
+  - `startDate`: Data inicial (formato ISO: YYYY-MM-DD)
+  - `endDate`: Data final (formato ISO: YYYY-MM-DD)
+- **Exemplo de Resposta**: Similar ao endpoint de listagem.
+
+#### Criar Novo Pedido
+
+- **URL**: `/orders`
+- **Método**: POST
+- **Autenticação**: Requer token JWT
+- **Perfis Autorizados**: ADMIN, WAITER, CUSTOMER
+- **Corpo da Requisição**:
+  ```json
+  {
+    "userId": 1,
+    "tableId": 2,
+    "isDelivery": false,
+    "items": [
+      {
+        "menuItemId": 3,
+        "quantity": 1,
+        "notes": "Sem cebola"
+      },
+      {
+        "menuItemId": 8,
+        "quantity": 2,
+        "notes": null
+      }
+    ]
+  }
+  ```
+- **Exemplo de Resposta**: O pedido criado, similar ao endpoint de busca por ID.
+
+#### Adicionar Itens a um Pedido
+
+- **URL**: `/orders/{id}/items`
+- **Método**: POST
+- **Autenticação**: Requer token JWT
+- **Perfis Autorizados**: ADMIN, WAITER
+- **Descrição**: Adiciona novos itens a um pedido existente.
+- **Corpo da Requisição**:
+  ```json
+  {
+    "items": [
+      {
+        "menuItemId": 5,
+        "quantity": 1,
+        "notes": "Sem gelo"
+      }
+    ]
+  }
+  ```
+- **Exemplo de Resposta**: O pedido atualizado.
+
+#### Atualizar Status do Pedido
+
+- **URL**: `/orders/{id}/status`
+- **Método**: PATCH
+- **Autenticação**: Requer token JWT
+- **Perfis Autorizados**: ADMIN, WAITER, KITCHEN
+- **Descrição**: Atualiza o status de um pedido.
+- **Corpo da Requisição**:
+  ```json
+  {
+    "status": "PREPARING"
+  }
+  ```
+- **Valores válidos para `status`**: `PENDING`, `PREPARING`, `READY`, `DELIVERED`, `CANCELED`
+- **Exemplo de Resposta**: O pedido com o status atualizado.
+
+#### Cancelar Pedido
+
+- **URL**: `/orders/{id}/cancel`
+- **Método**: POST
+- **Autenticação**: Requer token JWT
+- **Perfis Autorizados**: ADMIN, WAITER, ou o cliente que fez o pedido
+- **Descrição**: Cancela um pedido existente, alterando seu status para CANCELED.
+- **Exemplo de Resposta**: O pedido cancelado.
+
 ### Estoque
 
 #### Listar Todos os Itens de Estoque
@@ -813,6 +1046,32 @@ Authorization: Bearer seu_token_jwt
 | created_at    | Datetime | Data e hora de criação do registro               |
 | updated_at    | Datetime | Data e hora da última atualização do registro    |
 
+### Pedido (Order)
+
+| Campo        | Tipo     | Descrição                                        |
+|--------------|----------|-------------------------------------------------|
+| id           | Long     | Identificador único do pedido                   |
+| user_id      | Long     | Referência ao usuário que fez o pedido          |
+| table_id     | Long     | Referência à mesa (null para delivery)          |
+| total        | Decimal  | Valor total do pedido                           |
+| status       | Enum     | Status do pedido (PENDING, PREPARING, etc.)     |
+| is_delivery  | Boolean  | Indica se é um pedido para entrega              |
+| created_at   | Datetime | Data e hora de criação do registro              |
+| updated_at   | Datetime | Data e hora da última atualização do registro   |
+
+### Item de Pedido (OrderItem)
+
+| Campo          | Tipo     | Descrição                                        |
+|----------------|----------|-------------------------------------------------|
+| id             | Long     | Identificador único do item do pedido           |
+| order_id       | Long     | Referência ao pedido                            |
+| menu_item_id   | Long     | Referência ao item do cardápio                  |
+| quantity       | Int      | Quantidade solicitada                           |
+| price_at_time  | Decimal  | Preço no momento do pedido                      |
+| notes          | String   | Observações (ex: sem cebola)                    |
+| created_at     | Datetime | Data e hora de criação do registro              |
+| updated_at     | Datetime | Data e hora da última atualização do registro   |
+
 ## Configuração da Aplicação
 
 A aplicação está configurada com os seguintes componentes:
@@ -937,4 +1196,13 @@ As seguintes funcionalidades estão planejadas para implementação:
 
 - Implementação do sistema de mesas
 - Endpoints para listar, criar, atualizar e excluir mesas
-- Controle de status das mesas (disponível, ocupada, reservada, em limpeza) 
+- Controle de status das mesas (disponível, ocupada, reservada, em limpeza)
+
+### Versão 0.3.0 (Junho/2025)
+
+- Implementação do sistema de pedidos
+- Endpoints para criar, atualizar status e cancelar pedidos
+- Adicionar itens a pedidos existentes
+- Cálculo automático de valores
+- Vinculação entre pedidos e mesas
+- Atualização do estoque quando um pedido é entregue 

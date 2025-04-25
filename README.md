@@ -102,6 +102,17 @@ A documentação Swagger permite testar os endpoints diretamente pelo navegador,
 - **POST /stock/{id}/remove** - Remover quantidade de um item do estoque
 - **DELETE /stock/{id}** - Excluir item do estoque
 
+### Pedidos
+- **GET /orders** - Listar todos os pedidos
+- **GET /orders/{id}** - Buscar pedido por ID
+- **GET /orders/status/{status}** - Buscar pedidos por status
+- **GET /orders/user/{userId}** - Buscar pedidos de um usuário
+- **GET /orders/date-range** - Buscar pedidos por período
+- **POST /orders** - Criar novo pedido
+- **POST /orders/{id}/items** - Adicionar itens a um pedido existente
+- **PATCH /orders/{id}/status** - Atualizar status do pedido
+- **POST /orders/{id}/cancel** - Cancelar pedido
+
 ### Cardápio
 - **GET /menu** - Listar todos os itens do cardápio
 - **GET /menu/{id}** - Buscar item do cardápio por ID
@@ -163,10 +174,14 @@ O projeto atualmente implementa:
 - Gerenciamento de receitas (relação entre itens do cardápio e estoque)
 - Atualização automática da disponibilidade dos itens com base no estoque
 - Sistema de mesas com controle de status (disponível, ocupada, reservada, em limpeza)
+- Sistema de pedidos com vinculação às mesas e gerenciamento de status
+- Cálculo automático de valores dos pedidos
+- Atualização de estoque automática ao concluir pedidos
 
 Próximos passos:
-- Implementação do sistema de pedidos (mesa/delivery)
+- Implementação de sistema de pagamentos
 - Painel administrativo com visão em tempo real
+- Integração com entregadores para delivery
 
 ## Contribuindo
 
